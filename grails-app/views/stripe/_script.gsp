@@ -3,16 +3,21 @@
 <r:script disposition='head'>
 this.stripe_utils = (function() {
 	var formSelecter = "${formSelecter}",
-	stripeSubmitButtonSelecter = "${formSelecter} input[type=submit], ${formSelecter} .submit-button",
+	stripeSubmitButtonSelecter = "#subscription-form input[type=submit], #subscription-form .submit-button",
+	failureHandler = function(response) {
+		// Default error handler can be overridden
+		var errorElement;
+		// re-enable the submit button
+		jQuery(stripeSubmitButtonSelecter).removeAttr("disabled");
+		// show the errors on the form
+		errorElement = jQuery("#stripe-payment-errors");
+		errorElement.show();
+		errorElement.html(response.error.message);
+	}
 	stripeResponseHandler = function(status, response) {
-		var errorElement, form$, token;
+		var form$, token;
 		if (response.error) {
-			// re-enable the submit button
-			jQuery(stripeSubmitButtonSelecter).removeAttr("disabled");
-			// show the errors on the form
-			errorElement = jQuery("#stripe-payment-errors");
-			errorElement.show();
-			errorElement.html(response.error.message);
+			failureHandler(response);
 		} else {
 			form$ = jQuery(formSelecter);
 			// token contains id, last4, and card type
@@ -23,6 +28,11 @@ this.stripe_utils = (function() {
 			disable();
 			form$.submit();
 			enable();
+		}
+	},
+	registerCustomFailureHandler = function(handler) {
+		if(typeof handler === "function") {
+			failureHandler = handler;
 		}
 	},
 	stripeFormSubmitHandler = function(event) {
@@ -51,7 +61,8 @@ this.stripe_utils = (function() {
 
 	return {
 		disable:disable,
-		enable:enable
+		enable:enable,
+		registerCustomFailureHandler:registerCustomFailureHandler
 	};
 }());
 </r:script>
