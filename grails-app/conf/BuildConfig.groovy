@@ -3,6 +3,8 @@ grails.project.test.class.dir = "target/test-classes"
 grails.project.test.reports.dir = "target/test-reports"
 grails.project.target.level = 1.6
 //grails.project.war.file = "target/${appName}-${appVersion}.war"
+grails.project.dependency.resolver = "maven" // or ivy
+
 
 grails.project.dependency.resolution = {
     // inherit Grails' default dependencies
@@ -20,8 +22,7 @@ grails.project.dependency.resolution = {
     }
 
     plugins {
-        compile ":resources:1.1.6"
-        build(":release:2.2.0") {
+        build (":release:3.1.0"){
             export = false
         }
     }

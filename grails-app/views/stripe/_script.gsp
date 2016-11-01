@@ -1,9 +1,9 @@
-<r:require module="stripe"/>
+<asset:javascript src="stripe"/>
 
-<r:script disposition='head'>
+<asset:script type="text/javascript">
 this.stripe_utils = (function() {
 	var formSelecter = "${formSelecter}",
-	stripeSubmitButtonSelecter = "#subscription-form input[type=submit], #subscription-form .submit-button",
+	stripeSubmitButtonSelecter = "${formSelecter} input[type=submit], ${formSelecter} .submit-button",
 	failureHandler = function(response) {
 		// Default error handler can be overridden
 		var errorElement;
@@ -39,12 +39,35 @@ this.stripe_utils = (function() {
 		// disable the submit button to prevent repeated clicks
 		jQuery(stripeSubmitButtonSelecter).attr("disabled", "disabled");
 		// createToken returns immediately - the supplied callback submits the form if there are no errors
-		Stripe.createToken({
+
+		//check if the user wants to enable address verification or AVS
+		var enableAvs = "${enableAvs == 'true'}"
+
+		var options = {
 			number: jQuery('.card-number').val(),
 			cvc: jQuery('.card-cvc').val(),
 			exp_month: jQuery('.card-expiry-month').val(),
 			exp_year: jQuery('.card-expiry-year').val()
-		}, stripeResponseHandler);
+		}
+
+		if (enableAvs === 'true') {
+			var addressInformation = {
+						address_line1: jQuery('.card-address-line1').val(),
+						address_zip: jQuery('.card-address-zip').val()
+			}
+			jQuery.extend(options, addressInformation)
+		}
+		if(options.number === ''
+			|| options.cvc === ''
+			|| options.exp_month === ''
+			|| options.exp_year === '
+			|| (enableAvs === 'true' && options.address_line1 === '')
+			|| (enableAvs === 'true' && options.address_zip === '')) {
+			failureHandler({ error: { code: 'all.fields.required', message: 'Please fill in all form fields below' }});
+			return false;
+		}
+
+		Stripe.createToken(options, stripeResponseHandler);
 		return false; // submit from callback
 	},
 	disable = function() {
@@ -65,4 +88,4 @@ this.stripe_utils = (function() {
 		registerCustomFailureHandler:registerCustomFailureHandler
 	};
 }());
-</r:script>
+</asset:script>

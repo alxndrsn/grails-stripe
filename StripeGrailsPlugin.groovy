@@ -1,7 +1,6 @@
 class StripeGrailsPlugin {
-    def version = "1.5-frontlinesms-SNAPSHOT"
+    def version = '1.7-frontlinesms-TOOLS-1898-SNAPSHOT'
     def grailsVersion = "1.3.7 > *"
-    def dependsOn = ['resources':'1.1.6 > *']
 
     def title = "Stripe"
     def author = "Bobby Warner"

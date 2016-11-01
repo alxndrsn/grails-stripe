@@ -26,7 +26,9 @@ class StripeTagLib {
      */
     def script = { attrs, body ->
         verifyAttributePresent(attrs, 'formSelecter')
-        out << render(template: "/stripe/script", model: [ publishableKey: getPublishableKey(), formSelecter:attrs.formSelecter ], plugin: 'stripe')
+        out << render(template: "/stripe/script",
+                model: [ publishableKey: getPublishableKey(), formSelecter:attrs.formSelecter, enableAvs: attrs.enableAvs ],
+                plugin: 'stripe')
 
         def initialiseForm = attrs.initForm==null || Boolean.parseBoolean(attrs.initForm)
         if(initialiseForm){
@@ -39,7 +41,9 @@ class StripeTagLib {
      */
     def creditCardInputs = { attrs, body ->
         def cssClass = attrs.cssClass
-        out << render(template: "/stripe/creditCardInputs", model: [cssClass: cssClass], plugin: 'stripe')
+        out << render(template: "/stripe/creditCardInputs",
+                model: [cssClass: cssClass, enableAvs: attrs.enableAvs],
+                plugin: 'stripe')
     }
 
     private def getPublishableKey() {

@@ -1,5 +1,5 @@
-<r:script>
+<asset:script type="text/javascript">
     jQuery(function() {
         stripe_utils.enable();
     });
-</r:script>
+</asset:script>
